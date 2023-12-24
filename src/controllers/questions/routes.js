@@ -4,6 +4,7 @@ import { checkIfNotProduction } from "../../middlewares/developement.middleware.
 
 export default Router()
   .post("/scrape-questions", [checkIfNotProduction], controller.scrapeQuestions)
+  .get("/get-questions", controller.getAllQuestions)
   .post("/test", [checkIfNotProduction], (req, res, next) => {
     return res.status(200).json({
       message:
