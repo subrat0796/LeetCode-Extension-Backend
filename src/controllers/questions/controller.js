@@ -1,6 +1,5 @@
-import UsersModel from "../../models/users.model.js";
 import l from "../../utils/logger.js";
-import { LeetCode } from "leetcode-query";
+import axios from "axios";
 
 class AbstractController {
   async scrapeQuestions(req, res, next) {}
