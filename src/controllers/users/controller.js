@@ -1,94 +1,53 @@
-// import UsersModel from "../../models/users.model.js";
-// import JWTService from "../../utils/jwt.js";
-// import l from "../../utils/logger.js";
-// import bcrypt from "bcryptjs";
+import UsersModel from "../../models/users.model.js";
+import JWTService from "../../utils/jwt.js";
+import l from "../../utils/logger.js";
+import axios from "axios";
+import { LeetCode } from "leetcode-query";
 
-// class AbstractController {
-//   async generateToken(payload) {}
-//   async hashPassword(payload) {}
-//   async comparePassword(password, hashedPassword) {}
-//   async signUp(req, res, next) {}
-//   async signIn(req, res, next) {}
-// }
+class AbstractController {
+  async getUserDetails(req, res, next) {}
+}
 
-// class Controller extends AbstractController {
-//   async generateTokens(payload) {
-//     const accessToken = await JWTService.generateToken(payload);
-//     return accessToken;
-//   }
+class Controller extends AbstractController {
+  constructor() {
+    super();
+  }
+  async getUserDetails(req, res, next) {
+    try {
+      const leetcode = new LeetCode();
+      const user = await leetcode.user(
+        req.user.leetCodeProfileUrl.toString().split("/")[3]
+      );
 
-//   async hashPassword(password) {
-//     const salt = await bcrypt.genSalt(10);
-//     const hash = await bcrypt.hash(password, salt);
+      if (!user.matchedUser)
+        throw {
+          status: 404,
+          message:
+            "There is no such user please contact the admin to add the user again",
+        };
 
-//     return hash;
-//   }
+      // Todo - After getting the list , do ensure that if the recent submission matches any question in the question bank add a submission
+      // document into the database and then send also the list of questions the user has submitted from all the tables
 
-//   async comparePassword(password, hashPassword) {
-//     return await bcrypt.compare(password, hashPassword);
-//   }
+      return res.status(200).json({
+        matchedUser: {
+          username: user.matchedUser.username,
+          githubUrl: user.matchedUser.githubUrl,
+          profile: {
+            realName: user.matchedUser.profile.realName,
+            aboutMe: user.matchedUser.profile.aboutMe,
+            userAvatar: user.matchedUser.profile.userAvatar,
+            reputation: user.matchedUser.profile.reputation,
+            ranking: user.matchedUser.profile.ranking,
+          },
+          recentSubmissionList: user.recentSubmissionList,
+        },
+      });
+    } catch (error) {
+      l.error(error, "[UserController - Get User Details]");
+      next(error);
+    }
+  }
+}
 
-//   async signUp(req, res, next) {
-//     const { email, password, name, leetCodeProfileUrl } = req.body;
-//     try {
-//       const userInDb = await UsersModel.findOne({
-//         email,
-//       });
-//       if (userInDb) {
-//         throw {
-//           status: 404,
-//           message: "User Already Exists",
-//         };
-//       }
-
-//       const hashedPassword = await this.hashPassword(password);
-
-//       const newUserInDb = await UsersModel.create({
-//         email,
-//         password: hashedPassword,
-//         name,
-//         leetCodeProfileUrl,
-//       });
-
-//       return res.status(200).json({
-//         status: 200,
-//         token: await this.generateTokens(newUserInDb._id),
-//       });
-//     } catch (error) {
-//       l.error(error, "[Authentication Signup]");
-//       next(error);
-//     }
-//   }
-
-//   async signIn(req, res, next) {
-//     const { email, password } = req.body;
-//     try {
-//       const userInDb = await UsersModel.findOne({
-//         email,
-//       });
-
-//       if (!userInDb) {
-//         throw {
-//           status: 404,
-//           message: "User Does Not Exists",
-//         };
-//       }
-
-//       if (!(await this.comparePassword(password, userInDb.password))) {
-//         throw {
-//           status: 404,
-//           message: "User Not Verified",
-//         };
-//       }
-
-//       return res
-//         .status(200)
-//         .json({ status: 200, token: await this.generateTokens(userInDb._id) });
-//     } catch (error) {
-//       l.error(error, "[Authentication Signin]");
-//       next(error);
-//     }
-//   }
-// }
-
-// export default new Controller();
+export default new Controller();

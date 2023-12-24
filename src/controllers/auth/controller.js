@@ -4,30 +4,11 @@ import l from "../../utils/logger.js";
 import bcrypt from "bcryptjs";
 
 class AbstractController {
-  async generateToken(payload) {}
-  async hashPassword(payload) {}
-  async comparePassword(password, hashedPassword) {}
   async signUp(req, res, next) {}
   async signIn(req, res, next) {}
 }
 
 class Controller extends AbstractController {
-  async generateTokens(payload) {
-    const accessToken = await JWTService.generateToken(payload);
-    return accessToken;
-  }
-
-  async hashPassword(password) {
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(password, salt);
-
-    return hash;
-  }
-
-  async comparePassword(password, hashPassword) {
-    return await bcrypt.compare(password, hashPassword);
-  }
-
   async signUp(req, res, next) {
     const { email, password, name, leetCodeProfileUrl } = req.body;
     try {
@@ -41,7 +22,8 @@ class Controller extends AbstractController {
         };
       }
 
-      const hashedPassword = await this.hashPassword(password);
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       const newUserInDb = await UsersModel.create({
         email,
@@ -52,7 +34,7 @@ class Controller extends AbstractController {
 
       return res.status(200).json({
         status: 200,
-        token: await this.generateTokens(newUserInDb._id),
+        token: JWTService.generateToken({ id: newUserInDb._id }),
       });
     } catch (error) {
       l.error(error, "[Authentication Signup]");
@@ -74,7 +56,7 @@ class Controller extends AbstractController {
         };
       }
 
-      if (!(await this.comparePassword(password, userInDb.password))) {
+      if (!(await bcrypt.compare(password, userInDb.password))) {
         throw {
           status: 404,
           message: "User Not Verified",
@@ -83,7 +65,10 @@ class Controller extends AbstractController {
 
       return res
         .status(200)
-        .json({ status: 200, token: await this.generateTokens(userInDb._id) });
+        .json({
+          status: 200,
+          token: JWTService.generateToken({ id: userInDb._id }),
+        });
     } catch (error) {
       l.error(error, "[Authentication Signin]");
       next(error);
