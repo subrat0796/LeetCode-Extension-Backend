@@ -3,9 +3,12 @@ import express from "express";
 import { mongoDBUrl, port } from "./utils/config.js";
 import l from "./utils/logger.js";
 
+import cron from "node-cron";
+
 import AuthRoute from "./controllers/auth/routes.js";
 import UserRoute from "./controllers/users/routes.js";
 import QuestionRoute from "./controllers/questions/routes.js";
+import { fetchUserDetailsAndMapSubmissions } from "./utils/cron.js";
 
 const app = express();
 let server;
@@ -24,6 +27,9 @@ app.use((err, req, res, next) => {
     }
   );
 });
+
+// Using Cron Jobs
+cron.schedule("*/5 * * * *", fetchUserDetailsAndMapSubmissions);
 
 mongoose.connect(mongoDBUrl).then(() => {
   l.info("Connected to MONGODB");

@@ -27,8 +27,6 @@ class Controller extends AbstractController {
       // Todo - After getting the list , do ensure that if the recent submission matches any question in the question bank add a submission
       // Todo - document into the database and then send also the list of questions the user has submitted from all the tables
 
-      // Todo - Running a cron job so that I can extract the data of the users in behind the scene
-
       // Todo - Get all the question submitted by the user
 
       return res.status(200).json({
