@@ -1,3 +1,5 @@
+import questionsTableModel from "../../models/questionsTable.model.js";
+import usersModel from "../../models/users.model.js";
 import UsersModel from "../../models/users.model.js";
 import l from "../../utils/logger.js";
 import { LeetCode } from "leetcode-query";
@@ -24,12 +26,43 @@ class Controller extends AbstractController {
             "There is no such user please contact the admin to add the user again",
         };
 
-      // Todo - After getting the list , do ensure that if the recent submission matches any question in the question bank add a submission
-      // Todo - document into the database and then send also the list of questions the user has submitted from all the tables
-
-      // Todo - Get all the question submitted by the user
+      const results = await questionsTableModel.aggregate([
+        {
+          $lookup: {
+            from: "questions",
+            localField: "_id",
+            foreignField: "questionTable",
+            as: "questions",
+          },
+        },
+        {
+          $unwind: {
+            path: "$questions",
+          },
+        },
+        {
+          $lookup: {
+            from: "submissions",
+            localField: "questions._id",
+            foreignField: "questionLink",
+            as: "submissions",
+          },
+        },
+        {
+          $unwind: {
+            path: "$submissions",
+          },
+        },
+        {
+          $match: {
+            "submissions.userId": req.user._id,
+          },
+        },
+      ]);
 
       return res.status(200).json({
+        status: 200,
+        message: "Succesfully fetched the user data ",
         matchedUser: {
           username: user.matchedUser.username,
           githubUrl: user.matchedUser.githubUrl,
@@ -40,8 +73,8 @@ class Controller extends AbstractController {
             reputation: user.matchedUser.profile.reputation,
             ranking: user.matchedUser.profile.ranking,
           },
-          recentSubmissionList: user.recentSubmissionList,
         },
+        data: results,
       });
     } catch (error) {
       l.error(error, "[UserController - Get User Details]");
