@@ -12,11 +12,12 @@ Now you are ready for running the project locally
 
 # Todo
 
-1. Complete the whole setup
-2. Think of optimizations
-3. Adding docker
-4. Writing tests
-5. Running scripts in the start of the project so that the questions are downloaded automatically without hitting the route
-6. Configuring husky for pre-commit and having a proper code format
-7. Maybe add Google Signin features
-8. Keep on thinking about what extra features could be added ?
+[ ] Complete the whole setup  
+[ ] Think of optimizations  
+[ ] Adding docker  
+[ ] Writing tests  
+[ ] Add swagger documentation  
+[ ]Running scripts in the start of the project so that the questions are downloaded automatically without hitting the route  
+[ ] Configuring husky for pre-commit and having a proper code format  
+[ ] Maybe add Google Signin features  
+[ ] Keep on thinking about what extra features could be added ?
