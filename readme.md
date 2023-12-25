@@ -12,7 +12,7 @@ Now you are ready for running the project locally
 
 # Todo
 
-[ ] Complete the whole setup  
+[✅] Complete the whole setup  
 [ ] Think of optimizations  
 [ ] Adding docker  
 [ ] Writing tests  
