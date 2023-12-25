@@ -6,6 +6,7 @@ import { LeetCode } from "leetcode-query";
 
 class AbstractController {
   async getUserDetails(req, res, next) {}
+  async deleteUserSubmissions(req, res, next) {}
 }
 
 class Controller extends AbstractController {
@@ -78,6 +79,23 @@ class Controller extends AbstractController {
       });
     } catch (error) {
       l.error(error, "[UserController - Get User Details]");
+      next(error);
+    }
+  }
+
+  async deleteUserSubmissions(req, res, next) {
+    try {
+      // Todo - Delete all the submissions done by the user when they click the delete submissions for that table
+
+      return res.status(200).json({
+        status: 200,
+        message: "Successfully deleted the submissions of the user",
+      });
+    } catch (error) {
+      l.error(
+        error,
+        "[UserController - Delete All Submissions Done By The User]"
+      );
       next(error);
     }
   }
