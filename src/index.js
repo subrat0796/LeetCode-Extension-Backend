@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import express from "express";
 import { mongoDBUrl, port } from "./utils/config.js";
 import l from "./utils/logger.js";
-
+import cors from "cors";
 import cron from "node-cron";
 
 import AuthRoute from "./controllers/auth/routes.js";
@@ -14,6 +14,7 @@ const app = express();
 let server;
 
 app.use(express.json());
+app.use(cors());
 
 // Using the Routes
 app.use("/api/v1/auth", AuthRoute);
