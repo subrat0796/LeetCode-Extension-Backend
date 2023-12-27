@@ -14,6 +14,7 @@ Now you are ready for running the project locally
 
 [✅] Complete the whole setup  
 [ ] Think of optimizations  
+[✅] Connect it with the frontend
 [ ] Adding docker  
 [ ] Writing tests  
 [ ] Add swagger documentation  
