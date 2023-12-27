@@ -4,6 +4,7 @@ import { mongoDBUrl, port } from "./utils/config.js";
 import l from "./utils/logger.js";
 import cors from "cors";
 import cron from "node-cron";
+import rateLimit, { RateLimiter } from "express-rate-limit";
 
 import AuthRoute from "./controllers/auth/routes.js";
 import UserRoute from "./controllers/users/routes.js";
@@ -16,9 +17,15 @@ let server;
 app.use(express.json());
 app.use(cors());
 
+const userRouteRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  limit: 2,
+  legacyHeaders: false,
+});
+
 // Using the Routes
 app.use("/api/v1/auth", AuthRoute);
-app.use("/api/v1/user", UserRoute);
+app.use("/api/v1/user", userRouteRateLimit, UserRoute);
 app.use("/api/v1/question", QuestionRoute);
 
 app.use((err, req, res, next) => {
