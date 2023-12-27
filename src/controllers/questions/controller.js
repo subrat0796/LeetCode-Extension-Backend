@@ -96,7 +96,10 @@ class Controller extends AbstractController {
               $map: {
                 input: "$questions",
                 as: "question",
-                in: "$$question.questionLink",
+                in: {
+                  questionId: "$$question._id",
+                  questionLink: "$$question.questionLink",
+                },
               },
             },
           },
