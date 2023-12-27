@@ -4,7 +4,7 @@ import { mongoDBUrl, port } from "./utils/config.js";
 import l from "./utils/logger.js";
 import cors from "cors";
 import cron from "node-cron";
-import rateLimit, { RateLimiter } from "express-rate-limit";
+import rateLimit from "express-rate-limit";
 
 import AuthRoute from "./controllers/auth/routes.js";
 import UserRoute from "./controllers/users/routes.js";
