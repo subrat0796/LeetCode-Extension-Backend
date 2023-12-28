@@ -39,6 +39,12 @@ app.use((err, req, res, next) => {
 // Using Cron Jobs
 cron.schedule("*/5 * * * *", fetchUserDetailsAndMapSubmissions);
 
+app.use("*", (req, res, next) => {
+  return res.status(404).json({
+    message: "Route doesn't exists",
+  });
+});
+
 mongoose.connect(mongoDBUrl).then(() => {
   l.info("Connected to MONGODB");
   server = app.listen(port, () => {
